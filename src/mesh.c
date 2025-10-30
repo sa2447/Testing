@@ -48,12 +48,84 @@ void gf3d_mesh_init(Uint32 mesh_max)
         slog("cannot intilizat sprite manager for 0 sprites");
         return;
     }
+    else
+    {
+        slog("we have mesh_max");
+    }
+    
     mesh_manager.chain_length = gf3d_swapchain_get_chain_length();
-    mesh_manager.mesh_list = (Mesh*)gfc_allocate_array(sizeof(Mesh), mesh_max);
+    mesh_manager.mesh_list = (Mesh *)gfc_allocate_array(sizeof(Mesh), mesh_max);
     mesh_manager.mesh_count = mesh_max;
     mesh_manager.device = gf3d_vgraphics_get_default_logical_device();
 
+    
     gf3d_mesh_get_attribute_descriptions(&count);
+    
+
+    VkDevice device;
+    const char* configFile;
+    VkExtent2D extent;
+    Uint32 descriptorCount;
+    const VkVertexInputBindingDescription* vertexInputDescription;
+    const VkVertexInputAttributeDescription* vertextInputAttributeDescriptions;
+    Uint32 vertexAttributeCount;
+    VkDeviceSize bufferSize;
+    VkIndexType indexType;
+
+    device = gf3d_vgraphics_get_default_logical_device();
+    if (!device)
+    {
+        slog("no device");
+        return;
+    }
+
+    configFile = "config/model_pipeline.cfg";
+    if (!configFile)
+    {
+        slog("no config");
+        return;
+    }
+
+    extent = gf3d_vgraphics_get_view_extent();
+    if (&extent == NULL)
+    {
+        slog("no extent");
+        return;
+    }
+
+    if (!count)
+    {
+        slog("no count");
+        return;
+    }
+
+    if (!mesh_manager.attributeDescriptions)
+    {
+        slog("no ads");
+        return;
+    }
+
+
+    int check = sizeof(MeshUBO);
+
+    if (!check)
+    {
+        slog("no size of check");
+        
+        return;
+    }
+    else
+    {
+        slog("something");
+    }
+
+    indexType = VK_INDEX_TYPE_UINT16;
+    if (!indexType)
+    {
+        slog("no index type");
+        return;
+    }
+    
     mesh_manager.pipe = gf3d_pipeline_create_from_config(
         gf3d_vgraphics_get_default_logical_device(),
         "config/model_pipeline.cfg",
@@ -65,6 +137,10 @@ void gf3d_mesh_init(Uint32 mesh_max)
         sizeof(MeshUBO),
         VK_INDEX_TYPE_UINT16
     );
+
+    
+
+    
     mesh_manager.defaultTexture = gf3d_texture_load("images/default.png");
     if (__DEBUG)slog("mesh manager initiliazed");
     atexit(gf3d_mesh_manager_close);
@@ -86,6 +162,7 @@ Mesh* gf3d_mesh_new()
 
 Mesh* gf3d_mesh_load_obj(const char *filename)
 {
+    slog("mesh load obj called");
     int i;
     if (!filename)
     {
@@ -120,8 +197,11 @@ MeshPrimitive* gf3d_mesh_primitive_new()
     return gfc_allocate_array(sizeof(MeshPrimitive), 1);
 }
 
-VkVertexInputAttributeDescription*gf3d_mesh_get_attribute_descriptions(Uint32 count)
+VkVertexInputAttributeDescription* gf3d_mesh_get_attribute_descriptions(Uint32 *count)
 {
+
+    slog("called for ads");
+
     mesh_manager.attributeDescriptions[0].binding = 0;
     mesh_manager.attributeDescriptions[0].location = 0;
     mesh_manager.attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
@@ -136,12 +216,15 @@ VkVertexInputAttributeDescription*gf3d_mesh_get_attribute_descriptions(Uint32 co
     mesh_manager.attributeDescriptions[2].location = 2;
     mesh_manager.attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
     mesh_manager.attributeDescriptions[2].offset = offsetof(Vertex, texel);
-    if (count)count = MESH_ATTRIBUTE_COUNT;
+    if (count) *count = MESH_ATTRIBUTE_COUNT;
+
+
     return mesh_manager.attributeDescriptions;
 }
 
-VkVertexInputBindingDescription* gf3d_mesh_manager_get_bind_description()
+VkVertexInputBindingDescription * gf3d_mesh_manager_get_bind_description()
 {
+    slog("called for binds");
     mesh_manager.bindingDescription.binding = 0;
     mesh_manager.bindingDescription.stride = sizeof(Vertex);
     mesh_manager.bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
@@ -345,6 +428,9 @@ void gf3d_mesh_setup_face_buffers(MeshPrimitive *prim)
 
 Mesh* mesh_load(const char* filename)
 {
+
+    slog("called mesh load");
+
     Mesh* mesh;
     ObjData* data;
     MeshPrimitive* prim;

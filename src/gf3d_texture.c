@@ -295,6 +295,7 @@ Texture *gf3d_texture_convert_surface(SDL_Surface * surface)
 
 Texture *gf3d_texture_load(const char *filename)
 {
+    slog("called texture");
     void *mem;
     SDL_RWops *src;
     size_t fileSize = 0;

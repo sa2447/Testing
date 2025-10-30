@@ -28,6 +28,7 @@
 #include "gf3d_commands.h"
 #include "gf3d_texture.h"
 #include "gf3d_mesh.h"
+
 #include "gf2d_sprite.h"
 
 #include "gf3d_vgraphics.h"
@@ -194,6 +195,7 @@ void gf3d_vgraphics_init(const char *config)
         gf3d_vgraphics.bmask,
         gf3d_vgraphics.amask);
 
+    //find 1//
     gf3d_texture_init(1024);
 
     gf3d_command_system_init(16 * gf3d_swapchain_get_swap_image_count(), gf3d_vgraphics.device);
@@ -203,6 +205,7 @@ void gf3d_vgraphics_init(const char *config)
     gf3d_mesh_init(1024);
     gf2d_sprite_manager_init(1024);
     renderPipe = gf3d_mesh_get_pipeline();
+    //renderPipe = gf2d_sprite_get_pipeline();
 
     gf3d_swapchain_create_depth_image();
     gf3d_swapchain_setup_frame_buffers(renderPipe);
@@ -581,11 +584,6 @@ void gf3d_vgraphics_get_projection_matrix(GFC_Matrix4 *proj)
     memcpy(proj,gf3d_vgraphics.ubo.proj,sizeof(GFC_Matrix4));
 }
 
-void gf3d_vgraphics_set_view(GFC_Matrix4 view)
-{
-    gfc_matrix4_copy(gf3d_vgraphics.ubo.view,view);
-}
-
 void gf3d_vgraphics_get_view(GFC_Matrix4 *view)
 {
     if (!view)return;
@@ -701,6 +699,11 @@ GFC_Vector3D vgraphics_3d_position_to_screen_depth(GFC_Vector3D position)
     out.y = (0.5 *(transformed.y / transformed.w) + 0.5)*res.y;
     out.z = transformed.z;
     return out;
+}
+
+void gf3d_vgraphics_set_view(GFC_Matrix4 view)
+{
+    gfc_matrix4_copy(gf3d_vgraphics.ubo.view, view);
 }
 
 
